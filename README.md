@@ -2,15 +2,21 @@
 
 **Offline image adjustments in a single HTML file.**
 
-[简体中文](README.zh-CN.md)
+[Live Demo](https://pixel-tuner.hurongliang.workers.dev/) · [简体中文](README.zh-CN.md)
 
-Pixel Tuner is a small, local image adjustment tool with live brightness, contrast, and sharpness controls. Open the HTML file in your browser, choose an image, and adjust it without uploading anything.
+Pixel Tuner is a small, local image adjustment tool with live brightness, contrast, and sharpness controls. Use the live demo or open the downloaded HTML file in your browser, choose an image, and adjust it without uploading anything.
 
 No installation. No backend. No tracking. No external runtime dependencies.
 
 > Switch between English and Chinese with the segmented buttons in the top-right corner. Your selection is saved locally when browser storage is available. The interface defaults to English on first use, regardless of browser language.
 
 ## Quick start
+
+### Use online
+
+Open the **[live demo](https://pixel-tuner.hurongliang.workers.dev/)** to start editing immediately. Image processing runs locally in your browser, just as it does in the downloaded version.
+
+### Use offline
 
 1. Download [index.html](index.html). On GitHub, use **Download raw file** to save the actual HTML file.
 2. Double-click the downloaded file to open it in a recent desktop browser.

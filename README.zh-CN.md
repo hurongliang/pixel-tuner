@@ -2,15 +2,21 @@
 
 **一个 HTML 文件，离线完成图片调校。**
 
-[English](README.md) · [简体中文](README.zh-CN.md)
+[在线体验](https://pixel-tuner.hurongliang.workers.dev/) · [English](README.md)
 
-Pixel Tuner（净像）是一个在本机运行的轻量图片调校工具，支持实时调整亮度、对比度和锐度。用浏览器打开 HTML，选择图片即可使用，无需上传图片。
+Pixel Tuner（净像）是一个在本机运行的轻量图片调校工具，支持实时调整亮度、对比度和锐度。可以在线体验，也可以下载 HTML 后在浏览器打开，选择图片即可使用，无需上传图片。
 
 无需安装、无需后台、无统计、无外部运行依赖。
 
 > 右上角提供 English / 中文组合切换按钮，切换无需刷新，也不会清除图片或参数。浏览器允许时会记住语言选择；首次使用默认显示英文，不跟随浏览器语言。
 
 ## 快速开始
+
+### 在线使用
+
+打开 **[在线体验页面](https://pixel-tuner.hurongliang.workers.dev/)** 即可开始调校。与下载版一样，图片处理在本机浏览器中完成。
+
+### 离线使用
 
 1. 下载 [index.html](index.html)。在 GitHub 文件页面点击 **Download raw file**，保存实际的 HTML 文件。
 2. 双击文件，用较新的桌面浏览器打开。
