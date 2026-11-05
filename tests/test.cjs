@@ -13,9 +13,9 @@ assert.ok(html.includes('id="reset"'));
 assert.ok(!html.includes('id="original"'));
 const menu=html.match(/<select id="preset">([\s\S]*?)<\/select>/)[1];
 const options=[...menu.matchAll(/<option\b[^>]*value="([^"]+)"[^>]*>([^<]*)<\/option>/g)].map(m=>[m[1],m[2]]);
-assert.deepEqual(options,[['original','Original'],['taobao','Remove Taobao watermark'],['scan','Scan-style']],
+assert.deepEqual(options,[['original','Original'],['taobao','Remove Taobao watermark'],['scan','Scan-style'],['gray','Remove gray watermark']],
   'each preset must be an independent, correctly formed option');
-assert.ok(!/<option\b[^>]*\bdisabled\b/.test(menu),'all three options are selectable');
+assert.ok(!/<option\b[^>]*\bdisabled\b/.test(menu),'all four options are selectable');
 assert.ok(/<option\b[^>]*value="original"[^>]*\bselected\b/.test(menu),'original is selected by default');
 assert.ok(!/<\/option\s+[^>]/.test(menu),'closing option tags cannot have attributes');
 // Exercise the actual preset handlers independently of the async render queue.
@@ -40,12 +40,15 @@ assert.equal(presetContext.selectedPreset(presetValues),'scan');
 presetValues.sharpness=99;
 assert.equal(presetContext.selectedPreset(presetValues),'scan','manual adjustment keeps the starting preset');
 assert.equal(presetContext.selectedPreset({brightness:0,contrast:0,sharpness:0}),'original','reset selects original');
+presetContext.applyPreset('gray');
+assert.deepEqual(presetValues,{brightness:20,contrast:100,sharpness:100});
+assert.equal(presetContext.selectedPreset(presetValues),'gray');
 presetContext.applyPreset('original');
 assert.deepEqual(presetValues,{brightness:0,contrast:0,sharpness:0});
 assert.equal(presetContext.selectedPreset(presetValues),'original');
-assert.equal(requests,3);assert.equal(writes,3);
-presetContext.busy=true;presetContext.applyPreset('taobao');assert.equal(requests,3);
-presetContext.busy=false;presetContext.applyPreset('unknown');assert.equal(requests,3);
+assert.equal(requests,4);assert.equal(writes,4);
+presetContext.busy=true;presetContext.applyPreset('taobao');assert.equal(requests,4);
+presetContext.busy=false;presetContext.applyPreset('unknown');assert.equal(requests,4);
 const scheduler = html.slice(html.indexOf('async function pumpPreview()'), html.indexOf("\n$('select').onclick"));
 const cancel = html.match(/function cancelFull\(\)[^\n]+/)[0];
 const jobs = [], timers = new Map(), shown = [], saved = [], originals = [];

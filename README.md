@@ -57,10 +57,11 @@ Each update starts from the original image, so adjustments do not accumulate acr
 | Original | Original | 0% | 0% | 0% |
 | Taobao preset | Remove Taobao watermark | −10% | 20% | 20% |
 | Scan-style preset | Scan-style | 0% | 100% | 100% |
+| Gray watermark preset | Remove gray watermark | 20% | 100% | 100% |
 
-The menu contains three selectable options and defaults to **Original**. Choosing Original or clicking Reset sets all controls to zero and immediately shows the original image. You can fine-tune a preset with the sliders; when the values no longer match a recipe, the menu retains the last applied preset as the starting point.
+The menu contains four selectable options and defaults to **Original**. Choosing Original or clicking Reset sets all controls to zero and immediately shows the original image. You can fine-tune a preset with the sliders; when the values no longer match a recipe, the menu retains the last applied preset as the starting point.
 
-These are general image adjustment recipes. The Taobao preset does not detect or selectively remove watermarks, and removal is not guaranteed. The scan-style preset does not perform OCR, page detection, or perspective correction.
+These are general image adjustment recipes. The watermark presets do not detect or selectively remove watermarks, and removal is not guaranteed. The scan-style preset does not perform OCR, page detection, or perspective correction.
 
 ## Image support
 

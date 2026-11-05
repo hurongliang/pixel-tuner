@@ -2,6 +2,8 @@ const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/st
 const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 const translations=JSON.parse(html.match(/const translations=([^\n]+);/)[1]);
 assert.deepEqual(Object.keys(translations.en).sort(),Object.keys(translations.zh).sort());
+assert.equal(translations.en.gray,'Remove gray watermark');
+assert.equal(translations.zh.gray,'移除灰色水印');
 for(const value of Object.values(translations.en))assert.ok(!/[\u3400-\u9fff]/.test(value),'English UI must not contain Chinese');
 for(const match of html.matchAll(/data-i18n(?:-aria|-alt)?="([^"]+)"/g))for(const lang of ['en','zh'])assert.ok(translations[lang][match[1]],match[1]);
 for(const match of html.matchAll(/\b(?:t|localizedError)\('([^']+)'\)/g))assert.ok(translations.en[match[1]],'missing translation '+match[1]);
