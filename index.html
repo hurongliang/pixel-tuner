@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Adjust brightness, contrast, and sharpness locally. Preview and download PNG images.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' blob:; worker-src blob:; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Pixel Tuner · Live image adjustments v1.0</title>
+<style>
+:root{color-scheme:light;--paper:#f2f4f1;--surface:#fbfcfa;--ink:#24352c;--muted:#5c6d60;--rule:#cbd5cd;--green:#204b3d;font-family:"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--paper)}
+*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:default}button:focus-visible,input:focus-visible{outline:3px solid #769e85;outline-offset:4px}button{color:inherit}header,main,footer{width:min(1360px,calc(100% - 64px));margin:auto}header{height:112px;display:flex;align-items:center;gap:28px}.brand{font-size:25px;font-weight:650;letter-spacing:4px;display:flex;align-items:center;gap:14px}.mark{width:26px;height:26px;border:2px solid var(--green);position:relative}.mark:after{content:"";position:absolute;width:18px;height:18px;border:2px solid var(--green);left:8px;top:-8px}h1{font-size:19px;font-weight:500;border-left:1px solid var(--rule);padding-left:28px}.offline{margin-left:auto;font-size:12px;color:var(--muted);letter-spacing:1px}.workspace{background:var(--surface);border:1px solid var(--rule);border-radius:8px;overflow:hidden}.bar{display:flex;align-items:center;gap:24px;padding:24px;border-bottom:1px solid var(--rule)}.status{flex:1;margin:0;min-height:24px}.buttons{display:flex;gap:10px}.button{border:1px solid var(--green);border-radius:4px;background:transparent;padding:12px 20px;min-height:44px;white-space:nowrap}.primary{background:var(--green);color:white}.buttons .button{width:128px}.controls{border:0;margin:0;padding:26px 24px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px;border-bottom:1px solid var(--rule)}.label{display:flex;justify-content:space-between;font-size:14px;margin-bottom:16px}output{font-variant-numeric:tabular-nums}input[type=range]{width:100%;accent-color:var(--green);margin:0;cursor:pointer}.scale{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:8px}.panes{display:grid;grid-template-columns:minmax(0,1fr)}.pane{padding:24px 24px 0;min-width:0}h2{font-size:15px;font-weight:500;margin:0 0 20px}.stage{height:440px;width:100%;border:0;background:#e9eeea;display:flex;align-items:center;justify-content:center;padding:12px}.stage img{max-width:100%;max-height:100%;object-fit:contain}.stage:has(img){cursor:zoom-in}.empty{display:grid;gap:12px;text-align:center;color:var(--muted)}.empty strong{font-size:19px;font-weight:500;color:var(--ink)}.empty small{line-height:1.9}.meta{height:52px;display:flex;align-items:center;gap:12px;justify-content:space-between;font-size:12px;color:var(--muted)}.meta span:first-child{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.meta span:last-child{white-space:nowrap}.notice{padding:18px 24px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted);line-height:1.8;margin:0}.feedback{color:#a13224;min-height:32px;margin:12px 0 0;font-size:13px;line-height:1.8}footer{padding:12px 0 32px;font-size:12px;color:var(--muted)}.dragover{outline:3px solid #769e85;outline-offset:-4px}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.preset-row{grid-column:1/-1;display:flex;align-items:center;gap:16px;font-size:14px}.preset-row select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:4px;min-height:42px;padding:8px 32px 8px 12px;max-width:100%;min-width:0}.controls{row-gap:24px}select:focus-visible{outline:3px solid #769e85;outline-offset:4px}
+dialog{padding:0;border:1px solid var(--rule);border-radius:8px;width:calc(100% - 32px);max-width:1600px;height:90vh;max-height:94vh;background:var(--surface);color:var(--ink)}dialog::backdrop{background:#08150fb8}.preview-shell{height:100%;display:flex;flex-direction:column}.preview-head{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--rule);gap:16px}.preview-head h2{margin:0 0 4px}.filename{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60vw}.tools{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:12px 24px;border-bottom:1px solid var(--rule)}.tools output{width:56px;text-align:center;font-size:14px}.help{font-size:12px;color:var(--muted);margin-left:auto}.viewport{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable both-edges;background:#e9eeea}.viewport.pan{cursor:grab}.viewport.dragging{cursor:grabbing;user-select:none}.plane{display:flex;width:max-content;height:max-content;min-width:100%;min-height:100%}.plane img{margin:auto;max-width:none;max-height:none;flex-shrink:0;user-select:none;-webkit-user-drag:none}
+@media(max-width:760px){header,main,footer{width:calc(100% - 32px)}header{height:88px;gap:16px}.brand{font-size:22px}h1{font-size:16px;padding-left:16px}.offline{display:none}.bar{padding:16px;flex-wrap:wrap;gap:12px}.status{flex-basis:100%}.buttons{width:100%}.buttons .button{width:0;flex:1}.controls{grid-template-columns:1fr;gap:24px;padding:24px 16px}.panes{grid-template-columns:1fr}.pane{padding:20px 16px 0}.stage{height:300px}.notice{padding:16px}.preview-head,.tools{padding:12px}.tools .button{padding:10px 12px}.help{width:100%;margin:0}.button{font-size:14px}}
+.header-actions{margin-left:auto;display:flex;align-items:center;gap:20px}.language-switch{display:flex;flex-shrink:0;border:1px solid var(--green);border-radius:4px}.language-switch button{border:0;background:transparent;padding:9px 13px;min-height:38px;font-size:13px}.language-switch button+button{border-left:1px solid var(--green)}.language-switch button[aria-pressed=true]{background:var(--green);color:white}.status{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.buttons .button{width:140px}
+@media(max-width:1100px){.offline{display:none}}
+@media(max-width:760px){header{display:grid;grid-template-columns:minmax(0,1fr) auto;height:auto;min-height:100px;padding-block:18px;gap:10px}.brand{font-size:18px;letter-spacing:0;gap:12px}h1{grid-column:1;grid-row:2;font-size:14px;border:0;padding:0;margin:0}.header-actions{grid-column:2;grid-row:1/3;margin:0}.language-switch button{padding:8px 10px}.buttons .button{width:0;padding:10px 6px;font-size:12px}.status{width:100%;flex:1 0 100%}}
+</style>
+</head>
+<body>
+<header><div class="brand"><i class="mark" aria-hidden="true"></i><span data-i18n="brand">Pixel Tuner</span></div><h1 data-i18n="heading">Image tuner</h1><div class="header-actions"><span class="offline" data-i18n="offline">Live adjustments · Stays on your device</span><div class="language-switch" role="group" aria-label="Language" data-i18n-aria="language"><button type="button" id="lang-en" lang="en" aria-pressed="true">EN</button><button type="button" id="lang-zh" lang="zh-CN" aria-pressed="false">中文</button></div></div></header>
+<main>
+<section class="workspace" aria-label="Image adjustment workspace" data-i18n-aria="workspace">
+<div class="bar"><p class="status" id="status" role="status">Start with an image</p><div class="buttons"><button class="button" id="select" data-i18n="choose">Choose image</button><button class="button" id="reset" disabled data-i18n="reset">Reset</button><button class="button primary" id="download" disabled data-i18n="download">Download PNG</button></div></div>
+<fieldset class="controls" id="controls" aria-label="Image parameters" data-i18n-aria="parameters">
+<div class="preset-row"><label for="preset" data-i18n="preset">Preset</label><select id="preset"><option value="original" selected data-i18n="originalShort">Original</option><option value="taobao" data-i18n="taobao">Remove Taobao watermark</option><option value="scan" data-i18n="scan">Scan-style</option></select></div>
+<div><div class="label"><label for="brightness" data-i18n="brightness">Brightness</label><output for="brightness" id="brightness-value">0%</output></div><input id="brightness" type="range" min="-100" max="100" value="0" step="1"><div class="scale"><span>-100%</span><span>+100%</span></div></div>
+<div><div class="label"><label for="contrast" data-i18n="contrast">Contrast</label><output for="contrast" id="contrast-value">0%</output></div><input id="contrast" type="range" min="-100" max="100" value="0" step="1"><div class="scale"><span>-100%</span><span>+100%</span></div></div>
+<div><div class="label"><label for="sharpness" data-i18n="sharpness">Sharpness</label><output for="sharpness" id="sharpness-value">0%</output></div><input id="sharpness" type="range" min="0" max="100" value="0" step="1"><div class="scale"><span>0%</span><span>+100%</span></div></div>
+</fieldset>
+<div class="panes">
+<section class="pane"><h2 data-i18n="preview">Image preview</h2><button class="stage" id="result" aria-label="Choose an image or open a larger preview" data-i18n-aria="openPreview"><span class="empty"><strong data-i18n="dropTitle">Drop an image here</strong><span data-i18n="dropHint">Drag a file here, or click to choose</span><small><span data-i18n="formats">PNG, JPEG, WebP, BMP, static GIF</span><br><span data-i18n="limits">Up to 10MB. No TIFF, HEIC, or animations.</span></small></span></button><div class="meta"><span id="result-name"></span><span id="result-size"></span></div></section>
+</div>
+<p class="notice" data-i18n="notice">Choose an image to see the original. Move the sliders to adjust it, or reset to restore it. High contrast may remove tonal detail; keep your original.</p>
+</section>
+<p class="feedback" id="feedback" role="alert"></p>
+</main>
+<footer data-i18n="footer">No internet connection or image uploads required. Use a recent Chrome, Edge, Firefox, or Safari browser.</footer>
+<input class="sr-only" id="file" type="file" accept=".png,.jpg,.jpeg,.webp,.bmp,.gif" tabindex="-1" aria-label="Choose a source image" data-i18n-aria="file">
+<dialog id="preview" aria-labelledby="preview-title"><div class="preview-shell"><div class="preview-head"><div><h2 id="preview-title" data-i18n="preview">Image preview</h2><div class="filename" id="preview-name"></div></div><button class="button" id="close" data-i18n="close">Close</button></div><div class="tools"><button class="button" id="zoom-out" aria-label="Zoom out" data-i18n-aria="zoomOutAria" data-i18n="zoomOut">Zoom out</button><output id="zoom">100%</output><button class="button" id="zoom-in" aria-label="Zoom in" data-i18n-aria="zoomInAria" data-i18n="zoomIn">Zoom in</button><button class="button" id="fit" data-i18n="fit">Fit to window</button><button class="button" id="actual" data-i18n="actual">Actual size</button><span class="help" data-i18n="help">Scroll to zoom · Drag to pan</span></div><div class="viewport" id="viewport" tabindex="0" aria-label="Image preview: scroll to zoom and drag to pan" data-i18n-aria="viewport"><div class="plane"><img id="preview-image" alt="Enlarged preview" data-i18n-alt="enlarged" draggable="false"></div></div></div></dialog>
+<script id="processor" type="text/plain">
+// Pure pixel function. Radius 0.8 / threshold 4; approximation of unsharp masking.
+function adjustPixels(data,width,height,p){
+ const clamp=v=>Math.max(0,Math.min(255,v));
+ const round=v=>{const f=Math.floor(v),r=v-f;return r===.5?(f%2?f+1:f):Math.round(v)};
+ const lut=new Uint8Array(256);
+ for(let i=0;i<256;i++){const v=i/255-.5+p.brightness/100;lut[i]=clamp(p.contrast===100?(v>=0?255:0):round(255*(.5+v*(1+p.contrast/100)/(1-p.contrast/100))))}
+ if(!p.sharpness){for(let i=0;i<data.length;i+=4)for(let c=0;c<3;c++)data[i+c]=lut[data[i+c]];return data}
+ const radius=3,kernel=[];let sum=0;
+ for(let k=-radius;k<=radius;k++){const v=Math.exp(-k*k/(2*.8*.8));kernel.push(v);sum+=v}
+ for(let k=0;k<kernel.length;k++)kernel[k]/=sum;
+ const horizontal=new Uint8Array(width*height*3),output=new Uint8ClampedArray(data.length);
+ for(let y=0;y<height;y++)for(let x=0;x<width;x++)for(let c=0;c<3;c++){
+  let v=0;for(let k=-radius;k<=radius;k++)v+=data[(y*width+Math.max(0,Math.min(width-1,x+k)))*4+c]*kernel[k+radius];
+  horizontal[(y*width+x)*3+c]=round(v);
+ }
+ for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+  const i=(y*width+x)*4;
+  for(let c=0;c<3;c++){let v=0;for(let k=-radius;k<=radius;k++)v+=horizontal[(Math.max(0,Math.min(height-1,y+k))*width+x)*3+c]*kernel[k+radius];
+   const diff=data[i+c]-round(v);output[i+c]=lut[clamp(Math.abs(diff)>4?round(data[i+c]+diff*p.sharpness/100):data[i+c])];
+  }output[i+3]=data[i+3];
+ }return output;
+}
+self.onmessage=({data:m})=>{try{const data=adjustPixels(new Uint8ClampedArray(m.buffer),m.width,m.height,m.parameters);self.postMessage({buffer:data.buffer},[data.buffer])}catch(e){self.postMessage({error:e.message||'Image processing failed.'})}};
+</script>
+<script>
+'use strict';
+const $=id=>document.getElementById(id), keys=['brightness','contrast','sharpness'];
+
+const translations={"en":{"brand":"Pixel Tuner","heading":"Image tuner","offline":"Live adjustments · Stays on your device","choose":"Choose image","reset":"Reset","download":"Download PNG","preset":"Preset","taobao":"Remove Taobao watermark","scan":"Scan-style","brightness":"Brightness","contrast":"Contrast","sharpness":"Sharpness","preview":"Image preview","dropTitle":"Drop an image here","dropHint":"Drag a file here, or click to choose","formats":"PNG, JPEG, WebP, BMP, static GIF","limits":"Up to 10MB. No TIFF, HEIC, or animations.","notice":"Choose an image to see the original. Move the sliders to adjust it, or reset to restore it. High contrast may remove tonal detail; keep your original.","footer":"No internet connection or image uploads required. Use a recent Chrome, Edge, Firefox, or Safari browser.","close":"Close","zoomOut":"Zoom out","zoomIn":"Zoom in","fit":"Fit to window","actual":"Actual size","help":"Scroll to zoom · Drag to pan","workspace":"Image adjustment workspace","parameters":"Image parameters","openPreview":"Choose an image or open a larger preview","file":"Choose a source image","zoomOutAria":"Zoom out","zoomInAria":"Zoom in","viewport":"Image preview: scroll to zoom and drag to pan","cacheFailure":"Local saving failed. Download your result before closing this page.","cacheUnavailable":"Local storage is unavailable. You can still edit and download in this session.","apng":"Animated PNG is not supported.","pngCorrupt":"The PNG file is damaged.","webpCorrupt":"The WebP file is damaged.","webpAnimated":"Animated WebP is not supported.","gifCorrupt":"The GIF file is damaged.","gifEmpty":"The GIF file contains no valid image.","gifAnimated":"Animated GIF is not supported.","unsupported":"Choose PNG, JPEG, WebP, BMP, or static GIF. TIFF, HEIC, and animations are not supported.","pixelLimit":"Images must not exceed 30 million pixels.","decodeFailed":"Cannot read this image. It may be damaged or unsupported by your browser.","fileLimit":"Choose a valid image no larger than 10MB.","workerFailed":"Processing failed. Try a smaller image to reduce memory use.","workerUnavailable":"Cannot start local processing. Try a recent Chrome, Edge, Firefox, or Safari browser.","exportFailed":"Cannot export this image. Your browser may have run out of memory.","previewFailed":"Cannot open the image preview.","original":"Original image","originalShort":"Original","adjusted":"Adjusted image","liveAlt":"Live adjustment preview","live":"Live preview","fullPending":"Preparing full-resolution image","rechoose":"Choose another","restoring":"Restoring your workspace…","reading":"Reading image…","empty":"Start with an image","neutral":"Original · No adjustments","complete":"Ready to download","fullStatus":"Preparing full-resolution image…","liveStatus":"Updating preview…","resultTitle":"Adjusted image","processingError":"Image processing failed.","enlarged":"Enlarged preview","language":"Language","title":"Pixel Tuner · Live image adjustments v1.0","description":"Adjust brightness, contrast, and sharpness locally. Preview and download PNG images."},"zh":{"brand":"净像","heading":"图片调校","offline":"实时调校 · 图片留在本机","choose":"选择图片","reset":"重置","download":"下载 PNG","preset":"参数预设","taobao":"移除淘宝水印","scan":"转扫描件","brightness":"亮度","contrast":"对比度","sharpness":"锐度","preview":"图片预览","dropTitle":"把图片放在这里","dropHint":"拖拽图片，或点击选择","formats":"PNG、JPEG、WebP、BMP、静态 GIF","limits":"最大 10MB，不支持 TIFF、HEIC 和动图","notice":"选择图片后显示原图，拖动滑杆实时调整；点击“重置”恢复原图。高对比度可能损失照片层次，请保留原图。","footer":"无需联网或上传图片。建议使用新版 Chrome、Edge、Firefox 或 Safari。","close":"关闭","zoomOut":"缩小","zoomIn":"放大","fit":"适应窗口","actual":"实际大小","help":"滚轮缩放 · 按住鼠标拖动","workspace":"图片调校工作区","parameters":"图片参数","openPreview":"选择图片或放大预览","file":"选择原始图片","zoomOutAria":"缩小图片","zoomInAria":"放大图片","viewport":"图片预览，滚轮缩放，按住鼠标拖动","cacheFailure":"浏览器未能保存本地缓存，请在关闭页面前下载结果。","cacheUnavailable":"本地缓存不可用，当前页面仍可处理和下载图片。","apng":"不支持 APNG 动图。","pngCorrupt":"PNG 文件已损坏。","webpCorrupt":"WebP 文件已损坏。","webpAnimated":"不支持 WebP 动图。","gifCorrupt":"GIF 文件已损坏。","gifEmpty":"GIF 文件无有效图片。","gifAnimated":"不支持 GIF 动图。","unsupported":"请选择 PNG、JPEG、WebP、BMP 或静态 GIF；不支持 TIFF、HEIC 和动图。","pixelLimit":"图片不得超过 3000 万像素。","decodeFailed":"无法读取图片，文件可能已损坏或浏览器不支持此格式。","fileLimit":"请选择不超过 10MB 的有效图片。","workerFailed":"图片处理失败，可能超出浏览器内存限制，请使用较小图片。","workerUnavailable":"浏览器无法启动本地处理，请使用新版 Chrome、Edge、Firefox 或 Safari。","exportFailed":"无法导出图片，可能超出浏览器内存限制。","previewFailed":"无法打开图片预览。","original":"原始图片","originalShort":"原图","adjusted":"处理后的图片","liveAlt":"实时调校预览","live":"实时预览","fullPending":"正在生成原尺寸图片","rechoose":"重新选择","restoring":"正在恢复图片…","reading":"正在读取图片…","empty":"从一张图片开始","neutral":"原图 · 参数未调整","complete":"处理完成","fullStatus":"正在生成原尺寸图片…","liveStatus":"实时处理…","resultTitle":"处理结果","processingError":"图片处理失败。","enlarged":"放大预览","language":"界面语言","title":"净像 · 实时图片调校 v1.0","description":"在本机调整图片亮度、对比度和锐度，预览并下载PNG。"}};
+let locale='en';
+try{const saved=localStorage.getItem('pixel-tuner-language');if(saved==='en'||saved==='zh')locale=saved}catch{}
+function t(key){return translations[locale][key]||translations.en[key]||key}
+function localizedError(key){const error=new Error(t(key));error.i18nKey=key;return error}
+function applyLanguage(){
+ document.documentElement.lang=locale==='zh'?'zh-CN':'en';document.title=t('title');document.querySelector('meta[name="description"]').content=t('description');
+ document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
+ document.querySelectorAll('[data-i18n-aria]').forEach(el=>el.setAttribute('aria-label',t(el.dataset.i18nAria)));
+ document.querySelectorAll('[data-i18n-alt]').forEach(el=>el.alt=t(el.dataset.i18nAlt));
+ $('lang-en').setAttribute('aria-pressed',String(locale==='en'));$('lang-zh').setAttribute('aria-pressed',String(locale==='zh'));
+ const kind=$('result').dataset.imageKind,img=$('result').querySelector('img');if(img)img.alt=t(kind==='original'?'original':kind==='live'?'liveAlt':'adjusted');
+ if(kind==='live'){$('result-name').textContent=t('live');$('result-size').textContent=$('result-size').textContent.split(' · ')[0]+' · '+t('fullPending')}
+ if(dialog.open){$('preview-title').textContent=t(dialog.dataset.imageKind==='original'?'original':'resultTitle');if(dialog.dataset.live==='true')$('preview-name').textContent=t('live')}
+ paintFeedback();update();
+}
+function setLanguage(next){if(!Object.hasOwn(translations,next))return;locale=next;try{localStorage.setItem('pixel-tuner-language',locale)}catch{}applyLanguage()}
+const presets={original:{brightness:0,contrast:0,sharpness:0},taobao:{brightness:-10,contrast:20,sharpness:20},scan:{brightness:0,contrast:100,sharpness:100}};
+let original=null,result=null,originalURL='',resultURL='',liveURL='',busy=false,loaded=false,cacheQueue=Promise.resolve();
+let sourceCanvas=null,previewPixels=null,previewWidth=0,previewHeight=0;
+let revision=0,previewQueued=false,previewRunning=false,finalTimer=null,fullCancel=null,finalRevision=-1;
+
+const parameters=()=>Object.fromEntries(keys.map(k=>[k,Number($(k).value)]));
+const same=(a,b)=>keys.every(k=>a[k]===b[k]);
+let activePreset='original';
+function selectedPreset(p){return Object.keys(presets).find(key=>same(p,presets[key]))||activePreset}
+const isNeutral=p=>keys.every(k=>p[k]===0);
+let feedbackKey='',feedbackText='';
+function message(value){feedbackKey=value?.i18nKey||Object.keys(translations.en).find(key=>value===t(key))||'';feedbackText=typeof value==='string'?value:value?t('processingError'):'';paintFeedback()}
+function paintFeedback(){$('feedback').textContent=feedbackKey?t(feedbackKey):feedbackText}
+
+function update(){
+ const current=!!result&&same(parameters(),result.parameters)&&finalRevision===revision;
+ $('select').disabled=busy||!loaded;$('controls').disabled=busy||!loaded;
+ activePreset=selectedPreset(parameters());$('preset').value=activePreset;
+ $('download').disabled=!current||busy||!loaded;
+ $('reset').disabled=!original||busy||!loaded||isNeutral(parameters());
+ $('select').textContent=original?t('rechoose'):t('choose');
+ $('status').textContent=!loaded?t('restoring'):busy?t('reading'):!original?t('empty'):isNeutral(parameters())?t('neutral'):current?t('complete'):fullCancel?t('fullStatus'):t('liveStatus');
+ for(const k of keys){const v=Number($(k).value),s=(v>0?'+':'')+v+'%';$(k+'-value').value=s;$(k).setAttribute('aria-valuetext',s)}
+}
+
+function showImage(id,url,alt){const img=new Image();img.alt=alt;img.src=url;$(id).replaceChildren(img);$(id).disabled=false}
+function clearLive(){if(liveURL){URL.revokeObjectURL(liveURL);liveURL=''}}
+function showOriginal(){
+ clearLive();showImage('result',originalURL,t('original'));$('result').dataset.imageKind='original';$('result-name').textContent=original.file.name;
+ $('result-size').textContent=sourceCanvas?sourceCanvas.width+' × '+sourceCanvas.height:t('originalShort');
+}
+function renderOriginal(){if(originalURL)URL.revokeObjectURL(originalURL);originalURL=URL.createObjectURL(original.file);showOriginal()}
+function renderResult(){
+ clearLive();if(resultURL)URL.revokeObjectURL(resultURL);resultURL=result?URL.createObjectURL(result.blob):'';
+ if(isNeutral(parameters())){if(original)showOriginal();return}
+ if(result){showImage('result',resultURL,t('adjusted'));$('result').dataset.imageKind='adjusted';$('result-name').textContent=result.name;$('result-size').textContent=result.width+' × '+result.height}
+}
+
+function database(){return new Promise((resolve,reject)=>{const r=indexedDB.open('jingxiang-offline-v2',1);r.onupgradeneeded=()=>r.result.createObjectStore('workspace');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+async function cache(action,value){const db=await database();try{return await new Promise((resolve,reject)=>{const tx=db.transaction('workspace',action==='get'?'readonly':'readwrite'),store=tx.objectStore('workspace');const r=action==='get'?store.get('latest'):store.put(value,'latest');tx.oncomplete=()=>resolve(r.result);tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error)})}finally{db.close()}}
+function save(){const value={original,result,parameters:parameters(),activePreset,uiVersion:2};cacheQueue=cacheQueue.then(()=>cache('put',value)).catch(()=>message(t('cacheFailure')));return cacheQueue}
+// Check the decoded container format and reject animations before browser decoding.
+function staticFormat(bytes){
+ const text=(start,n)=>String.fromCharCode(...bytes.subarray(start,start+n)),view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
+ if(bytes.length>=8&&text(0,8)==='\x89PNG\r\n\x1a\n'){for(let pos=8;pos+12<=bytes.length;){const len=view.getUint32(pos),tag=text(pos+4,4);if(tag==='acTL')throw localizedError('apng');if(pos+12+len>bytes.length)throw localizedError('pngCorrupt');pos+=12+len}return 'image/png'}
+ if(bytes.length>=3&&bytes[0]===255&&bytes[1]===216&&bytes[2]===255)return 'image/jpeg';
+ if(bytes.length>=12&&text(0,4)==='RIFF'&&text(8,4)==='WEBP'){for(let pos=12;pos+8<=bytes.length;){const tag=text(pos,4),len=view.getUint32(pos+4,true);if(pos+8+len>bytes.length)throw localizedError('webpCorrupt');if(tag==='ANIM'||tag==='ANMF'||tag==='VP8X'&&(bytes[pos+8]&2))throw localizedError('webpAnimated');pos+=8+len+(len%2)}return 'image/webp'}
+ if(bytes.length>=14&&text(0,2)==='BM')return 'image/bmp';
+ if(bytes.length>=13&&['GIF87a','GIF89a'].includes(text(0,6))){let pos=13,frames=0;if(bytes[10]&128)pos+=3*(2**((bytes[10]&7)+1));const skip=()=>{while(true){if(pos>=bytes.length)throw localizedError('gifCorrupt');const n=bytes[pos++];if(!n)break;pos+=n;if(pos>bytes.length)throw localizedError('gifCorrupt')}};while(pos<bytes.length){const marker=bytes[pos++];if(marker===59){if(frames!==1)throw localizedError('gifEmpty');return 'image/gif'}if(marker===33){pos++;skip()}else if(marker===44){if(++frames>1)throw localizedError('gifAnimated');if(pos+9>bytes.length)throw localizedError('gifCorrupt');const flags=bytes[pos+8];pos+=9;if(flags&128)pos+=3*(2**((flags&7)+1));pos++;skip()}else throw localizedError('gifCorrupt')}throw localizedError('gifCorrupt')}
+ throw localizedError('unsupported');
+}
+async function decode(file){const bytes=new Uint8Array(await file.arrayBuffer()),type=staticFormat(bytes),url=URL.createObjectURL(new Blob([bytes],{type}));try{const img=new Image();img.src=url;await img.decode();if(!img.naturalWidth||img.naturalWidth*img.naturalHeight>30000000)throw localizedError('pixelLimit');return img}catch(e){if(e.i18nKey==='pixelLimit')throw e;throw localizedError('decodeFailed')}finally{URL.revokeObjectURL(url)}}
+// Decode the source only once; every update starts from these original pixels.
+async function prepareSource(file){
+ const img=await decode(file),canvas=document.createElement('canvas');
+ canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;
+ const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);
+ const ratio=Math.min(1,1280/Math.max(canvas.width,canvas.height)),small=document.createElement('canvas');
+ small.width=Math.max(1,Math.round(canvas.width*ratio));small.height=Math.max(1,Math.round(canvas.height*ratio));
+ const tiny=small.getContext('2d',{willReadFrequently:true});tiny.drawImage(canvas,0,0,small.width,small.height);
+ const pixels=tiny.getImageData(0,0,small.width,small.height).data;
+ const prepared={canvas,pixels,width:small.width,height:small.height};small.width=0;small.height=0;return prepared;
+}
+function useSource(prepared){if(sourceCanvas){sourceCanvas.width=0;sourceCanvas.height=0}sourceCanvas=prepared.canvas;previewPixels=prepared.pixels;previewWidth=prepared.width;previewHeight=prepared.height}
+function cancelFull(){if(fullCancel){const cancel=fullCancel;fullCancel=null;cancel()}}
+async function choose(file){
+ if(!file||busy||!loaded)return;busy=true;update();message('');
+ try{
+  if(file.size>10*1024*1024||!file.size)throw localizedError('fileLimit');
+  const prepared=await prepareSource(file);clearTimeout(finalTimer);cancelFull();revision++;
+  $('preview').close();original={file};result=null;for(const k of keys)$(k).value=0;useSource(prepared);renderOriginal();renderResult();save();
+ }catch(e){message(e)}finally{busy=false;update();if(original&&sourceCanvas)requestUpdate()}
+}
+const processor=$('processor').textContent;
+function startPixels(data,width,height,p){
+ let worker,url,abort;
+ const promise=new Promise((resolve,reject)=>{
+  const clean=()=>{if(worker)worker.terminate();if(url)URL.revokeObjectURL(url)};
+  abort=()=>{clean();reject(new DOMException('Cancelled','AbortError'))};
+  try{
+   url=URL.createObjectURL(new Blob([processor],{type:'text/javascript'}));worker=new Worker(url);
+   worker.onmessage=({data:m})=>{clean();m.error?reject(localizedError('processingError')):resolve(new Uint8ClampedArray(m.buffer))};
+   worker.onerror=()=>{clean();reject(localizedError('workerFailed'))};
+   worker.postMessage({buffer:data.buffer,width,height,parameters:p},[data.buffer]);
+  }catch(e){clean();reject(localizedError('workerUnavailable'))}
+ });
+ return {promise,cancel:()=>abort()};
+}
+async function pixelsToBlob(data,width,height){
+ const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
+ try{canvas.getContext('2d').putImageData(new ImageData(data,width,height),0,0);const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw localizedError('exportFailed');return blob}finally{canvas.width=0;canvas.height=0}
+}
+function showLive(blob,width,height){
+ if(liveURL)URL.revokeObjectURL(liveURL);liveURL=URL.createObjectURL(blob);
+ showImage('result',liveURL,t('liveAlt'));$('result').dataset.imageKind='live';$('result-name').textContent=t('live');
+ $('result-size').textContent=width+' × '+height+' · '+t('fullPending');
+}
+// At most one preview runs, plus a single pending set of the latest parameters.
+async function pumpPreview(){
+ if(previewRunning||!previewQueued||!previewPixels||busy)return;
+ previewRunning=true;previewQueued=false;
+ const rev=revision,source=original,p=parameters(),w=previewWidth,h=previewHeight;
+ try{
+  const job=startPixels(previewPixels.slice(),w,h,p),data=await job.promise;
+  const blob=await pixelsToBlob(data,w,h);
+  if(source===original&&finalRevision<rev&&!isNeutral(parameters()))showLive(blob,w,h);
+ }catch(e){if(source===original&&rev===revision)message(e)}
+ finally{previewRunning=false;if(previewQueued)pumpPreview()}
+}
+async function renderFull(rev){
+ if(!sourceCanvas||busy||rev!==revision)return;
+ const source=original,p=parameters(),w=sourceCanvas.width,h=sourceCanvas.height;
+ let job;
+ try{
+  let blob;
+  if(isNeutral(p)){
+   blob=await new Promise(resolve=>sourceCanvas.toBlob(resolve,'image/png'));
+   if(!blob)throw localizedError('exportFailed');
+  }else{
+   const data=sourceCanvas.getContext('2d',{willReadFrequently:true}).getImageData(0,0,w,h).data;
+   job=startPixels(data,w,h,p);fullCancel=job.cancel;update();
+   const adjusted=await job.promise;
+   if(rev!==revision||source!==original)return;
+   blob=await pixelsToBlob(adjusted,w,h);
+  }
+  if(rev!==revision||source!==original)return;
+  result={blob,width:w,height:h,name:source.file.name.replace(/\.[^.]+$/,'')+'_adjusted.png',parameters:p};
+  finalRevision=rev;renderResult();save();
+ }catch(e){if(e.name!=='AbortError'&&rev===revision)message(e)}
+ finally{if(job&&fullCancel===job.cancel)fullCancel=null;update()}
+}
+function requestUpdate(){
+ revision++;cancelFull();clearTimeout(finalTimer);message('');update();
+ if(!original||!sourceCanvas||busy)return;
+ if(isNeutral(parameters())){previewQueued=false;showOriginal();finalTimer=setTimeout(()=>renderFull(revision),0);return}
+ previewQueued=true;pumpPreview();
+ finalTimer=setTimeout(()=>renderFull(revision),250);
+}
+
+$('select').onclick=()=>$('file').click();$('file').onchange=e=>{choose(e.target.files[0]);e.target.value=''};
+$('result').onclick=()=>original?openPreview():!busy&&loaded&&$('file').click();
+$('result').ondragover=e=>{e.preventDefault();if(!busy)$('result').classList.add('dragover')};$('result').ondragleave=()=>$('result').classList.remove('dragover');$('result').ondrop=e=>{e.preventDefault();$('result').classList.remove('dragover');choose(e.dataTransfer.files[0])};
+function reset(){if(!original||busy||!loaded)return;for(const k of keys)$(k).value=0;requestUpdate();save()}
+$('reset').onclick=reset;
+function applyPreset(key){if(busy||!loaded||!Object.hasOwn(presets,key))return;activePreset=key;for(const k of keys)$(k).value=presets[key][k];requestUpdate();save()}
+$('preset').onchange=e=>applyPreset(e.target.value);
+
+window.addEventListener('dragover',e=>e.preventDefault());window.addEventListener('drop',e=>e.preventDefault());
+for(const k of keys){$(k).oninput=requestUpdate;$(k).onchange=()=>save()}
+$('download').onclick=()=>{if(!result||finalRevision!==revision||!same(parameters(),result.parameters))return;const a=document.createElement('a');a.href=resultURL;a.download=result.name;document.body.append(a);a.click();a.remove()};
+const dialog=$('preview'),viewport=$('viewport'),preview=$('preview-image');let zoom=1,fitMode=true,drag=null;
+function canPan(){viewport.classList.toggle('pan',viewport.scrollWidth>viewport.clientWidth||viewport.scrollHeight>viewport.clientHeight)}
+function scale(value,point){endDrag();const rect=viewport.getBoundingClientRect(),before=preview.getBoundingClientRect(),x=point?.clientX??rect.left+viewport.clientLeft+viewport.clientWidth/2,y=point?.clientY??rect.top+viewport.clientTop+viewport.clientHeight/2,ix=Math.max(0,Math.min(1,(x-before.left)/before.width)),iy=Math.max(0,Math.min(1,(y-before.top)/before.height));zoom=Math.max(.01,Math.min(4,value));fitMode=false;preview.style.width=preview.naturalWidth*zoom+'px';preview.style.height=preview.naturalHeight*zoom+'px';const after=preview.getBoundingClientRect();viewport.scrollLeft+=after.left+ix*after.width-x;viewport.scrollTop+=after.top+iy*after.height-y;$('zoom').value=Math.round(zoom*100)+'%';$('zoom-out').disabled=zoom<=.01;$('zoom-in').disabled=zoom>=4;canPan()}
+function fit(){if(!dialog.open||!preview.naturalWidth)return;scale(Math.min(1,(viewport.clientWidth-32)/preview.naturalWidth,(viewport.clientHeight-32)/preview.naturalHeight));fitMode=true;viewport.scrollTop=0;viewport.scrollLeft=0}
+async function openPreview(){if(busy)return;const neutral=isNeutral(parameters());preview.src=neutral?originalURL:(liveURL||resultURL||originalURL);dialog.dataset.imageKind=neutral?'original':'adjusted';$('preview-title').textContent=neutral?t('original'):t('resultTitle');dialog.dataset.live=liveURL&&!neutral?'true':'false';$('preview-name').textContent=neutral?original.file.name:(liveURL?t('live'):result?.name||original.file.name);try{await preview.decode();dialog.showModal();fit()}catch{message(t('previewFailed'))}}
+
+function endDrag(e){if(e?.pointerId!==undefined&&drag&&e.pointerId!==drag.id)return;const old=drag;drag=null;viewport.classList.remove('dragging');if(old&&viewport.hasPointerCapture(old.id))viewport.releasePointerCapture(old.id)}
+viewport.onpointerdown=e=>{if(e.button!==0||e.pointerType==='touch'||!viewport.classList.contains('pan'))return;e.preventDefault();drag={id:e.pointerId,x:e.clientX,y:e.clientY,left:viewport.scrollLeft,top:viewport.scrollTop};viewport.setPointerCapture(e.pointerId);viewport.classList.add('dragging')};viewport.onpointermove=e=>{if(!drag||drag.id!==e.pointerId)return;e.preventDefault();viewport.scrollLeft=drag.left-(e.clientX-drag.x);viewport.scrollTop=drag.top-(e.clientY-drag.y)};viewport.onpointerup=endDrag;viewport.onpointercancel=endDrag;viewport.onlostpointercapture=endDrag;preview.ondragstart=e=>e.preventDefault();viewport.addEventListener('wheel',e=>{e.preventDefault();const unit=e.deltaMode===1?16:e.deltaMode===2?viewport.clientHeight:1;scale(zoom*Math.exp(-Math.max(-100,Math.min(100,e.deltaY*unit))*.0025),e)},{passive:false});
+$('zoom-out').onclick=()=>scale(zoom/1.25);$('zoom-in').onclick=()=>scale(zoom*1.25);$('actual').onclick=()=>scale(1);$('fit').onclick=fit;$('close').onclick=()=>dialog.close();dialog.onclose=()=>endDrag();dialog.onclick=e=>{if(e.target===dialog)dialog.close()};window.onresize=()=>{if(dialog.open){if(fitMode)fit();else canPan()}};
+$('lang-en').onclick=()=>setLanguage('en');$('lang-zh').onclick=()=>setLanguage('zh');
+applyLanguage();
+(async()=>{
+ update();
+ try{
+  const saved=await cache('get');
+  if(saved?.original?.file instanceof Blob){
+   original=saved.original;
+   if(!(original.file instanceof File))original.file=new File([original.file],'original.png',{type:original.file.type});
+   if(saved.uiVersion===2){
+    if(Object.hasOwn(presets,saved.activePreset))activePreset=saved.activePreset;
+    for(const k of keys){const v=saved.parameters?.[k];if(Number.isInteger(v)&&v>=Number($(k).min)&&v<=Number($(k).max))$(k).value=v}
+    if(saved.result?.blob instanceof Blob)result=saved.result;
+   }
+   renderOriginal();renderResult();
+  }
+ }catch{message(t('cacheUnavailable'))}
+ finally{
+  loaded=true;update();
+  if(original){busy=true;update();try{useSource(await prepareSource(original.file))}catch(e){message(e)}finally{busy=false;update();if(sourceCanvas)requestUpdate()}}
+ }
+})();
+
+</script>
+</body>
+</html>
