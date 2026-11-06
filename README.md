@@ -10,6 +10,12 @@ No installation. No backend. No tracking. No external runtime dependencies.
 
 > Switch between English and Chinese with the segmented buttons in the top-right corner. Your selection is saved locally when browser storage is available. The interface defaults to English on first use, regardless of browser language.
 
+## Preview
+
+![Pixel Tuner in English with a local sample image and live brightness, contrast, and sharpness controls](docs/screenshots/pixel-tuner-en.png)
+
+*English interface with a locally generated sample image. Switch languages at the top right without changing your image or adjustments.*
+
 ## Quick start
 
 ### Use online
