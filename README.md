@@ -12,9 +12,9 @@ No installation. No backend. No tracking. No external runtime dependencies.
 
 ## Preview
 
-![Pixel Tuner in English with a local sample image and live brightness, contrast, and sharpness controls](docs/screenshots/pixel-tuner-en.png)
+![Pixel Tuner on first open in English, before selecting an image](docs/screenshots/pixel-tuner-en.png)
 
-*English interface with a locally generated sample image. Switch languages at the top right without changing your image or adjustments.*
+*First-open English interface: no image selected, Original preset, and all adjustments at 0%.*
 
 ## Quick start
 
